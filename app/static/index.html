@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trợ lý Pháp lý Luật Doanh nghiệp RAG - SMEBot</title>
+    <link rel="icon" type="image/svg+xml" href="/static/logo.svg?v=20">
+    <link rel="stylesheet" href="/static/style.css?v=20">
+    <!-- Google Fonts Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+</head>
+
+<body>
+
+    <!-- Outer Mac App Window Wrapper -->
+    <div class="app-window">
+
+
+
+        <!-- 3-Column Layout -->
+        <div class="app-layout">
+
+            <!-- Left Sidebar -->
+            <div class="sidebar sidebar-left" id="sidebarLeft">
+                <!-- Logo -->
+                <div class="sidebar-logo">
+                    <img src="/static/logo.svg?v=20" alt="SMEBot Logo" class="sidebar-logo-img">
+                    <span class="sidebar-logo-text">SMEBot</span>
+                </div>
+
+                <!-- Search -->
+                <div class="sidebar-search-box">
+                    <i data-lucide="search" class="search-box-icon"></i>
+                    <input type="text" class="search-box-input" placeholder="Search" disabled>
+                    <span class="search-shortcut">⌘K</span>
+                </div>
+
+                <!-- Main Menu -->
+                <div class="sidebar-menu">
+                    <a href="#" class="menu-item active" id="menuHome">
+                        <i data-lucide="home" class="menu-icon"></i>
+                        <span>Home</span>
+                    </a>
+                    <a href="#" class="menu-item" id="menuExplore">
+                        <i data-lucide="compass" class="menu-icon"></i>
+                        <span>Explore</span>
+                    </a>
+                    <a href="#" class="menu-item" id="menuLibrary">
+                        <i data-lucide="book-open" class="menu-icon"></i>
+                        <span>Library</span>
+                    </a>
+                    <a href="#" class="menu-item" id="menuHistory">
+                        <i data-lucide="clock" class="menu-icon"></i>
+                        <span>History</span>
+                    </a>
+                </div>
+
+                <!-- History Sections -->
+                <div class="history-section-container">
+                    <div class="history-section-header">
+                        <span>Lịch sử hội thoại</span>
+                        <div class="history-header-actions">
+                            <button class="new-chat-icon-btn" id="newSessionBtn" title="Hội thoại mới">
+                                <i data-lucide="plus"></i>
+                            </button>
+                            <button class="clear-history-btn" id="clearHistoryBtn" title="Xoá lịch sử">
+                                <i data-lucide="trash-2"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="session-list" id="sessionList">
+                        <!-- populated by JS -->
+                    </div>
+                </div>
+
+
+            </div>
+
+            <!-- Center Chat Panel -->
+            <div class="main-center" id="mainCenter">
+
+                <!-- Center Panel Header -->
+                <div class="center-header">
+                    <div class="model-selector-dropdown">
+                        <img src="/static/logo.svg?v=20" alt="SMEBot Logo" class="model-logo-img">
+                        <span class="model-name">iSMEBot 4o</span>
+                        <i data-lucide="chevron-down" class="dropdown-chevron"></i>
+                    </div>
+                    <div class="center-header-actions">
+                        <button class="settings-toggle-btn" id="toggleRightSidebarBtn" title="Cấu hình RAG">
+                            <i data-lucide="settings"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Chat History / Messages -->
+                <div class="chat-wrapper" id="chatWrapper">
+
+                    <!-- Welcome Screen -->
+                    <div class="welcome-screen" id="welcomeScreen">
+                        <!-- Orb Visual -->
+                        <div class="orb-container">
+                            <div class="glowing-orb"></div>
+                        </div>
+                        <h1 class="hero-display" id="welcomeTitle"></h1>
+                        <h2 class="hero-subdisplay"><span class="gradient-text" id="welcomeSubtitle"></span></h2>
+
+                        <!-- Suggestions Container (Clean chips) -->
+                        <div class="suggestions-container" id="suggestionsContainer">
+                            <div class="suggestions-title">Gợi ý câu hỏi pháp lý</div>
+                            <div class="examples-vertical">
+                                <button class="configurator-option-chip"
+                                    data-query="Các cơ sở ươm tạo và khu làm việc chung được hưởng những chính sách hỗ trợ nào về thuế và đất đai?">
+                                    [VN] Chính sách hỗ trợ thuế cho cơ sở ươm tạo?
+                                </button>
+                                <button class="configurator-option-chip"
+                                    data-query="创业孵化基地和共享工作空间在税收和土地方面享受哪些支持政策？ 请用中文回答。">
+                                    [ZH] 创业孵化基地税收和土地支持政策？
+                                </button>
+                                <button class="configurator-option-chip"
+                                    data-query="Mức thuế môn bài cụ thể của hộ kinh doanh cá thể có doanh thu trên 500 triệu đồng là bao nhiêu?">
+                                    [VN] Thuế môn bài hộ kinh doanh trên 500 triệu?
+                                </button>
+                                <button class="configurator-option-chip"
+                                    data-query="Tổ chức cá nhân thành lập cơ sở ươm tạo doanh nghiệp nhỏ và vừa hoạt động theo nguyên tắc chung nào?">
+                                    [VN] Nguyên tắc thành lập cơ sở ươm tạo?
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="chat-history" id="chatHistory">
+                        <!-- populated by JS -->
+                    </div>
+                </div>
+
+                <!-- Bottom Chat Input Bar Area -->
+                <div class="bottom-interface-layer">
+                    <div class="chat-input-container">
+                        <div class="chat-input-wrapper">
+                            <!-- Textarea / input fields -->
+                            <textarea class="search-input" id="chatInput"
+                                placeholder="Initiate a query or send a command to the AI..." rows="1"
+                                autocomplete="off"></textarea>
+
+                            <!-- Bottom control bar in chat box -->
+                            <div class="chat-input-bottom-bar">
+                                <div class="chat-input-left-controls">
+                                    <button class="chat-tool-btn attachment-btn" title="Đính kèm tệp">
+                                        <i data-lucide="paperclip"></i>
+                                    </button>
+
+                                    <!-- Relocated reasoning & guardrails as tool chips -->
+                                    <div class="chat-tool-chips">
+                                        <button class="tool-chip" id="toggleReasoning" role="switch"
+                                            aria-checked="true">
+                                            <i data-lucide="brain"></i>
+                                            <span>Reasoning</span>
+                                        </button>
+                                        <button class="tool-chip" id="togglePromptGuardrail" role="switch"
+                                            aria-checked="false">
+                                            <i data-lucide="shield-check"></i>
+                                            <span>Prompt Guard</span>
+                                        </button>
+                                        <button class="tool-chip" id="toggleStreamLoopGuardrail" role="switch"
+                                            aria-checked="false">
+                                            <i data-lucide="refresh-cw"></i>
+                                            <span>Stream Guard</span>
+                                        </button>
+                                        <button class="tool-chip" id="toggleGroundingGuardrail" role="switch"
+                                            aria-checked="false">
+                                            <i data-lucide="book-check"></i>
+                                            <span>Grounding</span>
+                                        </button>
+                                        <button class="tool-chip" id="togglePreventCjk" role="switch"
+                                            aria-checked="false">
+                                            <i data-lucide="languages"></i>
+                                            <span>Block CJK</span>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="chat-input-right-controls">
+                                    <!-- Send / Voice Action Button -->
+                                    <button class="send-action-btn" id="sendBtn" title="Gửi">
+                                        <i data-lucide="send" id="sendBtnIcon"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Sidebar: Collapsible Settings -->
+            <div class="sidebar sidebar-right collapsed" id="sidebarRight">
+                <div class="right-sidebar-header">
+                    <span class="right-sidebar-title">Settings</span>
+                    <button class="right-sidebar-close-btn" id="closeRightSidebarBtn" title="Đóng">
+                        <i data-lucide="x"></i>
+                    </button>
+                </div>
+
+                <div class="right-sidebar-content">
+                    <!-- Section: Retrieval Settings -->
+                    <div class="settings-section">
+                        <div class="settings-section-header" data-target="retrievalSettings">
+                            <span>Retrieval Settings</span>
+                            <i class="settings-section-chevron" data-lucide="chevron-down"></i>
+                        </div>
+                        <div class="settings-section-body" id="retrievalSettings">
+                            <div class="settings-row">
+                                <label class="settings-label">top_k_retrieval</label>
+                                <input type="number" class="settings-number-input" id="inputTopKRetrieval" value="5"
+                                    min="1" max="50">
+                            </div>
+                            <div class="settings-row">
+                                <label class="settings-label">Reranker</label>
+                                <div class="ios-switch" id="toggleReranker" role="switch" aria-checked="false"
+                                    tabindex="0">
+                                    <div class="ios-switch-thumb"></div>
+                                </div>
+                            </div>
+                            <div class="settings-row" id="rerankPoolRow">
+                                <label class="settings-label">top_k_rerank</label>
+                                <input type="number" class="settings-number-input" id="inputTopKRerank" value="20"
+                                    min="1" max="100">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Section: Sampling Parameters -->
+                    <div class="settings-section">
+                        <div class="settings-section-header" data-target="samplingSettings">
+                            <span>Sampling Parameters</span>
+                            <i class="settings-section-chevron" data-lucide="chevron-down"></i>
+                        </div>
+                        <div class="settings-section-body" id="samplingSettings">
+                            <div class="settings-row">
+                                <label class="settings-label">temperature</label>
+                                <input type="range" class="settings-slider" id="inputTemperature" min="0" max="2"
+                                    step="0.1" value="0">
+                                <span class="settings-value" id="displayTemperature">0.0</span>
+                            </div>
+                            <div class="settings-row">
+                                <label class="settings-label">top_k</label>
+                                <input type="number" class="settings-number-input" id="inputTopKSampling" value="20"
+                                    min="0" max="200">
+                            </div>
+                            <div class="settings-row">
+                                <label class="settings-label">top_p</label>
+                                <input type="range" class="settings-slider" id="inputTopP" min="0" max="1" step="0.05"
+                                    value="1">
+                                <span class="settings-value" id="displayTopP">1.00</span>
+                            </div>
+                            <div class="settings-row">
+                                <label class="settings-label">min_p</label>
+                                <input type="range" class="settings-slider" id="inputMinP" min="0" max="1" step="0.05"
+                                    value="0">
+                                <span class="settings-value" id="displayMinP">0.00</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Citation Detail Modal -->
+    <div class="citation-modal-overlay" id="citationModal">
+        <div class="citation-modal-container">
+            <div class="citation-modal-header">
+                <h3 id="modalTitle">Chi tiết trích dẫn [0]: Điều X</h3>
+                <button class="citation-modal-close" id="modalClose">&times;</button>
+            </div>
+            <div class="citation-modal-body">
+                <div class="citation-meta-item">
+                    <strong>Văn bản pháp lý:</strong> <span id="modalDocTitle">...</span>
+                </div>
+                <div class="citation-meta-item">
+                    <strong>Số hiệu văn bản:</strong> <span id="modalDocNumber">...</span>
+                </div>
+                <hr class="citation-divider">
+                <div class="citation-content" id="modalContent">
+                    ...
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="legal-fine-print">
+        Thông tin được rút trích tự động từ các nguồn tài liệu luật định sẵn và chỉ mang tính chất tham khảo.
+    </div>
+
+    <script src="/static/app.js?v=23"></script>
+</body>
+
+</html>

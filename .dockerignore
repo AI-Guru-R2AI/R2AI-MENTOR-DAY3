@@ -1,0 +1,10 @@
+tools/
+__pycache__/
+.venv/
+.venv*/
+*.pyc
+.DS_Store
+.env
+.git/
+notebooks/
+data/qdrant_data/
