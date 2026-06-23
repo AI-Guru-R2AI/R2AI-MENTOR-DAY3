@@ -1,4 +1,4 @@
-# Apple Legal RAG Chatbot (r2ai)
+# `Legal RAG Chatbot (r2ai)
 
 Hệ thống **RAG (Retrieval-Augmented Generation)** chuyên biệt để tư vấn và giải đáp thắc mắc liên quan đến **Luật Doanh nghiệp Việt Nam**. Hệ thống kết hợp cơ chế tìm kiếm lai (Hybrid Search), chấm điểm lại (Reranking), và bộ năm lớp lá chắn bảo mật (Guardrails) nhằm tối ưu hóa câu trả lời và loại bỏ triệt để hiện tượng ảo giác (hallucination).
 
